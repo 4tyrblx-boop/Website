@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Triton — Hypper Sandbox 0.5.0.2 Script</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur stdDeviation='3' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='50' cy='50' r='42' fill='none' stroke='%236a1b9a' stroke-width='4' opacity='0.7' filter='url(%23glow)'/><circle cx='50' cy='50' r='30' fill='none' stroke='%239b5de5' stroke-width='8' opacity='0.5' filter='url(%23glow)'/></svg>">
+  <style>
+    :root {
+      --bg: #080014;
+      --surface: #0f081a;
+      --text: #e8e8ff;
+      --text-muted: #b0b0d8;
+      --accent: #9b5de5;
+      --accent-glow: rgba(155, 93, 229, 0.35);
+      --accent-dark: #6a1b9a;
+      --border: rgba(155, 93, 229, 0.15);
+      --glow: rgba(155, 93, 229, 0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 7rem 1rem 5rem;
+      position: relative;
+    }
+
+    .logo-container {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 2rem;
+      position: relative;
+    }
+
+    .logo {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 45% 45%, #000 35%, #4a148c 65%, transparent 95%);
+      box-shadow: 
+        0 0 50px var(--glow),
+        inset 0 0 60px rgba(106, 27, 154, 0.4);
+      animation: slow-rotate 90s infinite linear, subtle-pulse 12s infinite ease-in-out;
+      border: 1px solid var(--border);
+    }
+
+    @keyframes slow-rotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes subtle-pulse {
+      0%, 100% { opacity: 0.92; transform: scale(1); }
+      50%      { opacity: 1;    transform: scale(1.04); }
+    }
+
+    .logo::after {
+      content: '';
+      position: absolute;
+      inset: -15%;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-image: linear-gradient(45deg, transparent, var(--accent), transparent) 1;
+      animation: disk-glow 18s infinite linear;
+      filter: blur(4px);
+      opacity: 0.6;
+    }
+
+    @keyframes disk-glow {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(-360deg); }
+    }
+
+    h1 {
+      font-size: 3.8rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      background: linear-gradient(90deg, #d0b0ff, #9b5de5, #d0b0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 30px var(--glow);
+      animation: title-glow 10s infinite ease-in-out;
+    }
+
+    @keyframes title-glow {
+      0%, 100% { text-shadow: 0 0 20px var(--glow); }
+      50%      { text-shadow: 0 0 45px var(--glow); }
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      margin: 0.8rem auto 0;
+    }
+
+    .creator {
+      font-size: 1.15rem;
+      color: var(--accent);
+      margin-top: 1.2rem;
+      opacity: 0.95;
+    }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto 5rem;
+      padding: 0 1.5rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 3rem 2.8rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.65), 0 0 35px var(--glow);
+      opacity: 0;
+      transform: translateY(30px);
+      animation: card-enter 1.4s forwards ease-out 0.6s;
+    }
+
+    @keyframes card-enter {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 1.2rem 2.5rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .info-label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .info-value {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .section {
+      margin: 3rem 0;
+    }
+
+    .section h3 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .why-choose p {
+      color: var(--text-muted);
+      margin-bottom: 1.2rem;
+    }
+
+    .download {
+      display: block;
+      width: 100%;
+      padding: 1.3rem;
+      margin: 3rem 0 2rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      border-radius: 10px;
+      box-shadow: 0 6px 25px var(--glow);
+      transition: all 0.25s ease;
+    }
+
+    .download:hover,
+    .download:focus {
+      background: linear-gradient(135deg, #b07aff, #7f3dd1);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(155,93,229,0.55);
+    }
+
+    .instructions {
+      background: rgba(155,93,229,0.06);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.8rem;
+      font-size: 1.05rem;
+      color: var(--text-muted);
+    }
+
+    .socials {
+      text-align: center;
+      margin: 6rem 0 4rem;
+    }
+
+    .socials h3 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .social-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 1.15rem;
+      transition: all 0.25s;
+    }
+
+    .social-link:hover {
+      color: var(--accent);
+      text-shadow: 0 0 12px var(--glow);
+    }
+
+    footer {
+      text-align: center;
+      padding: 4rem 1rem 2.5rem;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 3rem; }
+      .logo-container { width: 100px; height: 100px; }
+      .card { padding: 2.2rem 1.8rem; }
+      .info-grid { grid-template-columns: 1fr; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-container">
+    <div class="logo"></div>
+  </div>
+  <h1>Triton</h1>
+  <p class="subtitle">GameGuardian script for Hypper Sandbox 0.5.0.2</p>
+  <p class="creator">Developed by Dionysus</p>
+</header>
+
+<main>
+  <div class="card">
+    <div class="info-grid">
+      <div class="info-label">Version</div>
+      <div class="info-value">1.0.0</div>
+
+      <div class="info-label">Release Date</div>
+      <div class="info-value">February 28, 2026</div>
+
+      <div class="info-label">Target Application</div>
+      <div class="info-value">Hypper Sandbox 0.5.0.2</div>
+
+      <div class="info-label">GameGuardian Compatibility</div>
+      <div class="info-value">All versions</div>
+    </div>
+
+    <div class="section why-choose">
+      <h3>Why Choose Triton</h3>
+      <p>Triton is purpose-built to deliver consistent, stable performance in the Hypper Sandbox environment. It utilizes carefully optimized memory reading and writing patterns that reduce overhead and maintain low detection probability across a wide range of device specifications and network conditions.</p>
+      
+      <p>Unlike many alternatives, Triton undergoes systematic testing against the most recent game patches and GameGuardian releases prior to each distribution. This approach minimizes the need for immediate user-side fixes or workarounds when updates occur, providing longer periods of uninterrupted functionality.</p>
+      
+      <p>The script architecture prioritizes modularity and clean code structure, allowing selective activation of individual capabilities. This design choice helps preserve system resources, reduces unnecessary background activity, and lowers the overall footprint during execution — particularly beneficial on mid-range or older devices.</p>
+      
+      <p>Emphasis has been placed on robust anti-detection logic that evolves in response to observed behavioral analysis patterns in the target application. Triton avoids aggressive or easily fingerprintable modification techniques, favoring subtle, context-aware interventions that align more closely with legitimate gameplay variance.</p>
+      
+      <p>Long-term maintainability is a core principle. The implementation is designed to be extensible, with clear separation of concerns between core logic, game-specific offsets, and user-facing controls. This foundation supports efficient updates and adaptations as the target application and underlying tooling continue to evolve.</p>
+      
+      <p>In summary, Triton represents a deliberate, engineering-focused solution for users who require dependable, low-profile, and future-resistant modification capabilities rather than short-lived, high-visibility exploits.</p>
+    </div>
+
+    <a href="triton2.lua" download="Triton_v1.3_HypperSandbox_0.5.0.2.lua" class="download">
+      Download Script
+    </a>
+
+    <div class="instructions">
+      <strong>Usage Instructions:</strong><br>
+      Launch GameGuardian, attach to the Hypper Sandbox process, load the script file and execute. Activate required features from the menu. Compatible with all GameGuardian versions; no additional configuration required in most cases.
+    </div>
+  </div>
+
+  <div class="socials">
+    <h3>Community Channels</h3>
+    <div class="social-links">
+      <a href="https://t.me/yourchannel" class="social-link" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a href="https://discord.gg/yourinvite" class="social-link" target="_blank" rel="noopener noreferrer">Discord</a>
+      <a href="https://youtube.com/@yourchannel" class="social-link" target="_blank" rel="noopener noreferrer">YouTube</a>
+      <a href="https://x.com/yourhandle" class="social-link" target="_blank" rel="noopener noreferrer">X</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  © 2026 Triton — Developed by Dionysus • GameGuardian-based modification • For educational and private use only • Not affiliated with VobbyGames or GameGuardian developers
+</footer>
+
+</body>
+</html>
